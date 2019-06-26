@@ -1,4 +1,8 @@
-# JavaScript
+---
+typora-root-url: ./
+---
+
+JavaScript
 
 [TOC]
 
@@ -130,6 +134,126 @@ let a = {
 
 1. 如果是对象，就通过`toPrimitive`转换对象
 2. 如果是字符串，就通过`unicode`字符串索引来比较
+
+## 数组
+
+### map FlatMap和Reduce
+
+#### map
+
+>`Map` 作用是生成一个新数组，遍历原数组，将每个元素拿出来做一些变换然后 `append` 到新的数组中。
+
+
+  ```javascript
+[1, 2, 3].map((v) => v + 1)
+// -> [2, 3, 4]
+  ```
+
+> `Map` 有三个参数，分别是当前索引元素，索引，原数组
+
+```javascript
+['1','2','3'].map(parseInt)
+//  parseInt('1', 0) -> 1
+//  parseInt('2', 1) -> NaN
+//  parseInt('3', 2) -> NaN
+```
+
+#### FlatMap
+
+> `FlatMap` 和 `map` 的作用几乎是相同的，但是对于多维数组来说，会将原数组降维。可以将 `FlatMap`看成是 `map` + `flatten` ，目前该函数在浏览器中还不支持。
+
+```js
+[1, [2], 3].flatMap((v) => v + 1)
+// -> [2, 3, 4]
+```
+
+#### Reduce
+
+> `Reduce` 作用是数组中的值组合起来，最终得到一个值
+
+```js
+function a() {
+    console.log(1);
+}
+
+function b() {
+    console.log(2);
+}
+
+[a, b].reduce((a, b) => a(b()))
+// -> 2 1
+```
+
+### 去重
+
+1.利用数组原型对象上的forEach和includes方法
+
+```js
+function unique(arr) {
+	var newArr = []
+	arr.forEach(item=>{
+	 return newArr.includes(item)?'':newArr.push(item)
+	})
+	return newArr
+}
+```
+
+2.利用数组原型对象上的lastIndexOf方法
+
+```js
+function unique(arr) {
+	var res = []
+	for(var i =0;i<arr.length;i++) {
+		res.lastIndexOf(arr[i])!==-1?'':res.push(arr[i])
+	}
+	return res
+}
+```
+
+3.利用es6的set方法
+
+```js
+function unique(arr) {
+	return Array.from(new Set(arr))
+}
+```
+
+### 排序
+
+#### sort方法
+
+```js
+var arr= [10,20,1,2]
+arr.sort(function(a,b){
+	return a-b
+})
+```
+
+> 如果想按照其他标准进行排序，就需要提供比较函数，该函数要比较两个值，然后返回一个用于说明这两个值的相对顺序的数字。比较函数应该具有两个参数 a 和 b，其返回值如下：
+>
+> - 若 a 小于 b，在排序后的数组中 a 应该出现在 b 之前，则返回一个小于 0 的值。
+> - 若 a 等于 b，则返回 0。
+> - 若 a 大于 b，则返回一个大于 0 的值。
+
+#### 冒泡排序
+
+```js
+var arr = [10,20,1,2]
+var t
+for(var i =0;i<arr.length;i++) {
+	for(var j = i+1;j<arr.length;j++) {
+        if(arr[i]>arr[j]) {
+            t = arr[i]
+            arr[i] = arr[j]
+            arr[j] = t
+        }
+    }
+}
+```
+
+
+
+
 
 ## 原型
 
@@ -302,19 +426,276 @@ arr.0.call(arr)
 
 ## 深浅拷贝
 
+```javascript
+let a = {
+	age:1
+}
+let b = a
+a.age = 2
+console.log(b.age)//2
+```
+
+从上述例子中我们可以发现，如果给一个变量赋值一个对象，那么两者的值会是同一个引用，其中一方改变，另一方也会相应改变。
+
+通常在开发中我们不希望出现这样的问题，我们可以使用浅拷贝来解决这个问题。
+
+### 浅拷贝
+
+#### Object.assign
+
+```javascript
+let a = {
+	age:1
+}
+let b = Object.assign({},a)
+a.age = 2
+console.log(b.age)//1
+```
+
+#### ...
+
+```javascript
+let a = {
+	age:1
+}
+let b = {...a}
+a.age = 2
+console.log(b.age)//1
+```
+
+#### Array
+
+```javascript
+var arr1 = [1,2],arr2 = arr1.slice()
+console.log(arr1)//[1,2]
+console.log(arr2)//[1,2]
+arr2[0] = 3
+console.log(arr1) //[1,2]
+console.log(arr2) //[3,2]
+```
+
+#### JSON.parse(JSON.stringify(obj))
+
+```javascript
+var obj1 = {
+	x:1,
+	y:{
+		m:1
+	}
+}
+var obj2 = JSON.parse(JSON.stringify(obj1))
+console.log(obj1)//{x:1,y:{m:1}}
+console.log(obj2)//{x:1,y:{m:1}}
+obj2.y.m = 2
+console.log(obj1) //{x:1,y:{m:1}}
+console.log(obj2) //{x:1,y:{m:2}}
+```
+
+> undefined 任意的函数以及symbol值,在序列化过程中会被忽略(出现在非数组对象的属性值中时)或者被转换成null(出现在数组中时)
+
+```javascript
+var obj1 = {
+	x:1,
+	y:undefined,
+	z:function add(z1,z2) {
+		return z1+z2
+	},
+	a:Symbol("foo")
+}
+var obj2 = JSON.parse(JSON.stringify(obj1))
+console.log(obj1)//{x:1,y:undefined,z:f,a:Symbol(foo)}
+console.log(JSON.stringify(obj1))//{"x":1}
+console.log(obj2) //{x:1}
+```
+
+​	JSON.parse(JSON.stringify(obj)) 不适用场景
+
+1. 会忽略undefined
+2. 会忽略symbol
+3. 会忽略function
+4. 不能序列化函数
+5. 不能解决循环引起的对象
+
+### 深拷贝
+
+#### loadsh深拷贝函数
+
+`_.cloneDeep`
+
+#### jquery的$.extends
+
+#### MessageChannel
+
+> 如果你所需拷贝的对象含有内置类型并且不包含函数,可以使用`MessageChannel`
+
+```javascript
+function structuralClone(obj) {
+  return new Promise(resolve => {
+    const {port1, port2} = new MessageChannel();
+    port2.onmessage = ev => resolve(ev.data);
+    port1.postMessage(obj);
+  });
+}
+
+var obj = {a: 1, b: {
+    c: b
+}}
+// 注意该方法是异步的
+// 可以处理 undefined 和循环引用对象
+(async () => {
+  const clone = await structuralClone(obj)
+})()
+```
+
+
+
+#### 循环引用拷贝
+
+```javascript
+function deepCopy(obj, parent = null) {
+    // 创建一个新对象
+    let result = {};
+    let keys = Object.keys(obj),
+        key = null,
+        temp= null,
+        _parent = parent;
+    // 该字段有父级则需要追溯该字段的父级
+    while (_parent) {
+        // 如果该字段引用了它的父级则为循环引用
+        if (_parent.originalParent === obj) {
+            // 循环引用直接返回同级的新对象
+            return _parent.currentParent;
+        }
+        _parent = _parent.parent;
+    }
+    for (let i = 0; i < keys.length; i++) {
+        key = keys[i];
+        temp= obj[key];
+        // 如果字段的值也是一个对象
+        if (temp && typeof temp=== 'object') {
+            // 递归执行深拷贝 将同级的待拷贝对象与新对象传递给 parent 方便追溯循环引用
+            result[key] = DeepCopy(temp, {
+                originalParent: obj,
+                currentParent: result,
+                parent: parent
+            });
+
+        } else {
+            result[key] = temp;
+        }
+    }
+    return result;
+}
+
+var obj1 = {
+    x: 1, 
+    y: 2
+};
+obj1.z = obj1;
+
+var obj2 = deepCopy(obj1);
+console.log(obj1); //太长了去浏览器试一下吧～ 
+console.log(obj2); //太长了去浏览器试一下吧～ 
+
+
+```
+
 
 
 ## 模块化
+
+### es6
+
+> 在有Babel的情况下,可以直接使用es6的模块化
+
+```javascript
+//file a.js
+export function a(){}
+export function b(){}
+//file b.js
+export default function(){}
+import {a,b} from './a.js'
+import xxx from './b.js'
+```
+
+### CommonJS
+
+> CommonJS 是Node独有的规范,在浏览器中使用就需要用到Browserify解析
+
+```javascript
+//a.js
+module.export = {
+	a:1
+}
+//or
+exports.a = 1
+
+//b.js
+var module = require('./a.js')
+module.a //log 1
+
+```
+
+> 在上述代码中，`module.exports` 和 `exports` 很容易混淆，让我们来看看大致内部实现
+
+```javascript
+var module = require('./a.js')
+module.a
+// 这里其实就是包装了一层立即执行函数，这样就不会污染全局变量了，
+// 重要的是 module 这里，module 是 Node 独有的一个变量
+module.exports = {
+    a: 1
+}
+// 基本实现
+var module = {
+  exports: {} // exports 就是个空对象
+}
+// 这个是为什么 exports 和 module.exports 用法相似的原因
+var exports = module.exports
+var load = function (module) {
+    // 导出的东西
+    var a = 1
+    module.exports = a
+    return module.exports
+};
+```
+
+再来说说 `module.exports` 和 `exports`，用法其实是相似的，但是不能对 `exports` 直接赋值，不会有任何效果。
+
+对于 `CommonJS` 和 ES6 中的模块化的两者区别是：
+
+- 前者支持动态导入，也就是 `require(${path}/xx.js)`，后者目前不支持，但是已有提案
+- 前者是同步导入，因为用于服务端，文件都在本地，同步导入即使卡住主线程影响也不大。而后者是异步导入，因为用于浏览器，需要下载文件，如果也采用同步导入会对渲染有很大影响
+- 前者在导出时都是值拷贝，就算导出的值变了，导入的值也不会改变，所以如果想更新值，必须重新导入一次。但是后者采用实时绑定的方式，导入导出的值都指向同一个内存地址，所以导入值会跟随导出值变化
+- 后者会编译成 `require/exports` 来执行的
+
+### AMD
+
+> AMD 是有RequireJS提出的
+
+```javascript
+// AMD
+define(['./a', './b'], function(a, b) {
+    a.do()
+    b.do()
+})
+define(function(require, exports, module) {
+    var a = require('./a')
+    a.doSomething()
+    var b = require('./b')
+    b.doSomething()
+})
+```
 
 
 
 ## 防抖
 
-
+>在滚动事件中需要做个复杂计算或者实现一个按钮的防二次点击操作。这些需求都可以通过函数防抖动来实现。尤其是第一个需求，如果在频繁的事件回调中做复杂计算，很有可能导致页面卡顿，不如将多次计算合并为一次计算，只在一个精确点做操作。
 
 ## 节流
 
-
+> 防抖动和节流本质是不一样的。防抖动是将多次执行变为最后一次执行，节流是将多次执行变成每隔一段时间执行。
 
 ## 继承
 
@@ -328,11 +709,11 @@ arr.0.call(arr)
 
 Promise是ES6新增的语法，解决了回调地狱的问题。
 
-
+> 可以把Promise看成一个状态机.初始是pending状态,可以通过函数resolve和reject,将状态转变为resolved或者rejected状态,状态一单改变就不能再次变化
 
 ## Generator
 
-
+> Generator 是 ES6 中新增的语法，和 Promise 一样，都可以用来异步编程
 
 ## Map、FlatMap、Reduce
 
@@ -344,17 +725,145 @@ Promise是ES6新增的语法，解决了回调地狱的问题。
 
 ## Proxy
 
+> Proxy 是 ES6 中新增的功能，可以用来自定义对象中的操作
+
+```js
+let p = new Proxy(target, handler);
+// `target` 代表需要添加代理的对象
+// `handler` 用来自定义对象中的操作
+```
+
+可以很方便的使用 Proxy 来实现一个数据绑定和监听
+
+
+  
+
 
 
 ## 0.1+0.2！=0.3
 
-
+> 因为 JS 采用 IEEE 754 双精度版本（64位），并且只要采用 IEEE 754 的语言都有该问题。
 
 ## 正则表达式
 
 
 
 ## ES6
+
+### let const
+
+> let const 都是块级作用域,其有效范围仅在代码块中
+
+### 箭头函数
+
+#### 箭头函数与普通函数的区别
+
+箭头函数时匿名函数,不能作为构造函数,不能使用new
+
+```js
+let FunConstructor = () => {
+    console.log('lll');
+}
+
+let fc = new FunConstructor();
+```
+
+![](/1299975-20180320163758486-1808142372.png)
+
+箭头函数不绑定arguments,取而代之用reset参数...解决
+
+```js
+function A(a){
+  console.log(arguments);
+}
+A(1,2,3,4,5,8);  //  [1, 2, 3, 4, 5, 8, callee: ƒ, Symbol(Symbol.iterator): ƒ]
+
+
+let B = (b)=>{
+  console.log(arguments);
+}
+B(2,92,32,32);   // Uncaught ReferenceError: arguments is not defined
+
+
+let C = (...c) => {
+  console.log(c);
+}
+C(3,82,32,11323);  // [3, 82, 32, 11323]
+```
+
+箭头函数不绑定this,会捕获其所在的上下文的this值,作为自己的this值
+
+```js
+var obj = {
+  a: 10,
+  b: () => {
+    console.log(this.a); // undefined
+    console.log(this); // Window {postMessage: ƒ, blur: ƒ, focus: ƒ, close: ƒ, frames: Window, …}
+  },
+  c: function() {
+    console.log(this.a); // 10
+    console.log(this); // {a: 10, b: ƒ, c: ƒ}
+  }
+}
+obj.b(); 
+obj.c();
+```
+
+箭头函数通过call()或apply()方法调用一个函数时,只穿入了一个参数,对this没有影响
+
+```js
+let obj2 = {
+    a: 10,
+    b: function(n) {
+        let f = (n) => n + this.a;
+        return f(n);
+    },
+    c: function(n) {
+        let f = (n) => n + this.a;
+        let m = {
+            a: 20
+        };
+        return f.call(m,n);
+    }
+};
+console.log(obj2.b(1));  // 11
+console.log(obj2.c(1)); // 11
+```
+
+箭头函数没有原型属性
+
+```js
+var a = ()=>{
+  return 1;
+}
+
+function b(){
+  return 2;
+}
+
+console.log(a.prototype);  // undefined
+console.log(b.prototype);   // {constructor: ƒ}
+```
+
+箭头函数不能当做Generator函数,不能使用yieid关键字
+
+箭头函数的this永远指向其上下文的this,任何方法都不能改变其指向,如call() bind() apply()
+
+普通函数的this指向调用它的那个对象
+
+
+
+### 解构
+
+### 扩展运算符(...)
+
+### 字符串语法
+
+### 数组去重
+
+
+
+
 
 
 
