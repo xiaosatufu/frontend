@@ -699,6 +699,39 @@ define(function(require, exports, module) {
 
 ## 继承
 
+在ES5中，
+
+```js
+function Super(){}
+Super.prototype.getNumber = function(){
+    return 1
+}
+function Sub(){}
+let s = new Sub()
+Sub.prototype = Object.create(Super.prototype,{
+    constructor:{
+		value:Sub,//对象属性的默认值，默认值为undefined
+        enumerable:false,//对象属性是否可通过for-in循环，flase为不可循环，默认值为true
+        writable:true,//对象属性是否可修改,flase为不可修改，默认值为true
+        configurable:true //能否使用delete、能否修改属性特性、或能够修改访问器属性，false为不可重定义，默认值为true
+    }
+})
+```
+
+
+
+ES6中，
+
+```
+class myDate extends Date{
+	test(){
+		reutrn this.getTime()
+	}
+}
+let myDate = new MyDate()
+myDate.test()
+```
+
 
 
 ## call、bind、apply 的区别
@@ -736,7 +769,7 @@ let p = new Proxy(target, handler);
 可以很方便的使用 Proxy 来实现一个数据绑定和监听
 
 
-  
+
 
 
 
