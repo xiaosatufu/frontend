@@ -269,6 +269,14 @@ for(var i =0;i<arr.length;i++) {
 
 [深入解析原型中的各个难点](https://github.com/KieSun/Dream/issues/2)
 
+### 原型的实际应用
+
+#### jquery和zepto的简单实用
+
+#### zepto如何使用原型
+
+#### jquere如何使用原型
+
 ## new
 
 1. 新生成一个对象
@@ -720,9 +728,40 @@ Sub.prototype = Object.create(Super.prototype,{
 
 
 
+```js
+function Animal(){
+	this.eat = function(){
+        console.log('Animal eat')
+    }
+}
+function Dog() {
+    this.bark = function(){
+        console.log('Dog bark')
+    }
+}
+
+//绑定原型,实现继承
+Dog.prototype = new Animal()
+/*
+new 的作用
+1.新生成一个对象
+2.链接到到原型
+3.绑定this
+4.返回新的对象
+*/
+
+var hashiqi = new Dog()
+hashiqi.eat()
+hashiqi.bark()
+```
+
+
+
+
+
 ES6中，
 
-```
+```js
 class myDate extends Date{
 	test(){
 		reutrn this.getTime()
@@ -732,17 +771,38 @@ let myDate = new MyDate()
 myDate.test()
 ```
 
+```js
+class Animal{
+	constructor(name) {
+		this.name = name
+	}
+    eat(){
+        alert(this.name + 'eat')
+    }
+}
+class Dog extends Animal{
+	constructor(name){
+        super(name)
+        this.name = name
+    }
+    say(){
+        alert(this.name + 'say')
+    }
+}
+const dog = new Dog('哈士奇')
+dog.say()
+dog.eat()
+```
+
 
 
 ## call、bind、apply 的区别
 
 
 
-## Promise
+- 
 
-Promise是ES6新增的语法，解决了回调地狱的问题。
 
-> 可以把Promise看成一个状态机.初始是pending状态,可以通过函数resolve和reject,将状态转变为resolved或者rejected状态,状态一单改变就不能再次变化
 
 ## Generator
 
@@ -781,11 +841,26 @@ let p = new Proxy(target, handler);
 
 
 
-## ES6
+## ES6常用功能
 
 ### let const
 
 > let const 都是块级作用域,其有效范围仅在代码块中
+
+### Promise
+
+Promise是ES6新增的语法，解决了回调地狱的问题。
+
+> 可以把Promise看成一个状态机.初始是pending状态,可以通过函数resolve和reject,将状态转变为resolved或者rejected状态,状态一单改变就不能再次变化
+
+### callback hell
+
+### Promise 语法
+
+- new Promise 实例,而且要return
+- new Promise 时要传入函数,函数有resolve,reject两个参数
+- 成功是执行resolve()失败时执行reject()
+- then 监听结果
 
 ### 箭头函数
 
@@ -886,7 +961,28 @@ console.log(b.prototype);   // {constructor: ƒ}
 
 
 
-### 解构
+### 解构赋值
+
+### 块级作用域
+
+```js
+//js
+var obj = {a:100,b:200}
+for(var item in obj) {
+    console.log(console.log(item))
+}
+console.log(item) //b
+//es6
+const obj = {a:100,b:200}
+for(let item in obj) {
+    console.log(item)
+}
+console.log(item)//undefined
+```
+
+
+
+### 函数默认参数
 
 ### 扩展运算符(...)
 
@@ -894,15 +990,90 @@ console.log(b.prototype);   // {constructor: ƒ}
 
 ### 数组去重
 
-
-
-
-
-
-
 ## 算法
+
+## Class
+
+### JS构造函数
+
+```js
+function MathHandle(x,y) {
+    this.x = x;
+    this.y = y;
+} //构造函数
+MathHandle.prototype.add = function(){
+    return this.x + this.y;
+} //原型扩展方法
+var m = new MathHandle(1,2) //实例化
+console.log(m.add())
+
+MathHandle.prototype.constructor === MathHandle// true
+m.__proto__ === MathHandle.prototype //true
+```
+
+### Class语法
+
+```js
+class MathHandle {
+    constructor(x,y) {
+        this.x = x;
+       	this.y = y;
+    }
+    add(){
+        return this.x + this.y
+    }
+}
+const m = new MathHandle(1,2)
+console.log(m.add())
+```
+
+### 语法糖
+
+```js
+class MathHandle {
+	//...
+}
+typeof MathHandle //function
+MathHandle === MathHandle.prototype.constructor//true
+
+```
+
+
 
 
 
 ## 工具函数片段
 
+## 异步
+
+### 什么是单线程,和异步有什么关系
+
+#### 单线程 - 只有一个线程,只能做一件事
+
+#### 原因 - 避免DOM渲染的冲突
+
+- 浏览器需要渲染DOM
+- JS可以修改DOM结构
+- JS执行的时候,浏览器DOM渲染会暂停
+- 两段JS也不能同时执行(都修改DOM就冲突了)
+- webworker支持多线程,但是不能访问DOM
+
+#### 解决方案 - 异步
+
+### 什么是event-loop
+
+事件轮询,JS实现异步的具体解决方案
+
+同步代码,直接执行
+
+异步函数放在**异步队列**中
+
+待同步函数执行完毕,**轮询**执行异步队列的函数
+
+### 是否用过jQuery的Deferred
+
+### Promise的基本使用和原理
+
+### 介绍一下async/await(和Promise的区别和联系)
+
+### 当前JS解决异步的方案
