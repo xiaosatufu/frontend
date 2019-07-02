@@ -338,7 +338,14 @@ actions可以理解为通过将mutations里面处里数据的方法变成可异�
 
 
 
+## MVVM
 
+### 之前使用jquery和现在使用vue或者react框架的区别
 
+### 如何理解mvvm
 
+### vue如何使用响应式
 
+### vue如何解析模板
+
+### 介绍vue的实现流程

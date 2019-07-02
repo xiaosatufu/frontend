@@ -269,6 +269,10 @@ for(var i =0;i<arr.length;i++) {
 
 [深入解析原型中的各个难点](https://github.com/KieSun/Dream/issues/2)
 
+### 原型如何实际应用
+
+### 原型如何满足扩展
+
 ## new
 
 1. 新生成一个对象
@@ -894,9 +898,81 @@ console.log(b.prototype);   // {constructor: ƒ}
 
 ### 数组去重
 
+### 模块化的使用和编译环境
+
+#### export语法
+
+```js
+//util1.js
+export default {
+    a:100
+}
+//util2.js
+export function fn1() {
+    alert('fn1')
+}
+export function fn2(){
+    alert('fn2')
+}
+//index.js
+import util1 from './util1.js'
+import {fn1,fn2} from './util2.js'
+console.log(util1)
+fn1()
+fn2()
+
+```
 
 
 
+#### 模块化的基本语句
+
+#### 开发环境配置
+
+- 安装node环境，运行npm init
+- npm install --save-dev babel-core babel-preset-es2015 babel-preset-latest
+- 创建.babelrc文件
+- npm install --global babel-cli 
+- babel --version
+
+```
+//.babelrc
+{
+	"presets":["es2015","latest"]，
+	plugings:[]
+}
+```
+
+##### 开发环境-webpack
+
+- npm install webpack babel-loader --save-dev
+- 配置webpack.config.js
+- 配置package.json中的scripts
+- npm start
+
+#### 关于JS众多模块化标准
+
+### Class与JS构造函数的区别
+
+### Promise的用法
+
+### ES6其他常用功能
+
+
+
+## 异步
+
+### 什么是单线程，和异步有何关系
+
+### 什么是event-loop
+
+### 目前JS解决异步的方案有哪些
+
+### 如何只用jQuery解决异步
+
+### Pormise的标准
+
+### async、await的使用
 
 
 
