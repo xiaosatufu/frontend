@@ -849,20 +849,11 @@ let p = new Proxy(target, handler);
 
 > let const 都是块级作用域,其有效范围仅在代码块中
 
-### Promise
-
-Promise是ES6新增的语法，解决了回调地狱的问题。
-
-> 可以把Promise看成一个状态机.初始是pending状态,可以通过函数resolve和reject,将状态转变为resolved或者rejected状态,状态一单改变就不能再次变化
+> 
 
 ### callback hell
 
-### Promise 语法
-
-- new Promise 实例,而且要return
-- new Promise 时要传入函数,函数有resolve,reject两个参数
-- 成功是执行resolve()失败时执行reject()
-- then 监听结果
+- 
 
 ### 箭头函数
 
@@ -1048,25 +1039,11 @@ fn2()
 
 ### Class与JS构造函数的区别
 
-### Promise的用法
-
 ### ES6其他常用功能
 
 
 
-## 异步
-
-### 什么是单线程，和异步有何关系
-
-### 什么是event-loop
-
-### 目前JS解决异步的方案有哪些
-
-### 如何只用jQuery解决异步
-
-### Pormise的标准
-
-### async、await的使用
+### 
 ## 算法
 
 ## Class
@@ -1151,6 +1128,71 @@ MathHandle === MathHandle.prototype.constructor//true
 
 ### Promise的基本使用和原理
 
+Promise是ES6新增的语法，解决了回调地狱的问题。
+
+> 可以把Promise看成一个状态机.初始是pending状态,可以通过函数resolve和reject,将状态转变为resolved或者rejected状态,状态一单改变就不能再次变化
+
+#### Promise 语法
+
+- new Promise 实例,而且要return
+- new Promise 时要传入函数,函数有resolve,reject两个参数
+- 成功是执行resolve()失败时执行reject()
+- then 监听结果
+
+#### Promise标准
+
+- 三种状态：pending fulfilled rejected
+- 初始状态是pending
+- pending变成fulfilled，或者pending变为rejected
+- 状态变化不可逆
+- Promise实例必须实现then这个方法
+- then()必须可以接收两个函数作为参数
+- then()返回的必须是一个Promise实例
+
+#### Promise.all
+
+```js
+//Promise.all 接收一个promise对象数组
+//待全部完成之后，统一执行success
+Promise.all([result1,result2]).then(datas=>{
+    //接收到的datas是一个数组，依次包含了多个promise返回的内容
+    console.log(datas[0])
+    console.log(datas[1])
+})
+```
+
+#### Promise.race
+
+```js
+//Promise.race接收一个包含多个promise对象的数组
+//只要有一个完成，就执行success
+Promise.race([result1,result2]).then(data=>{
+    //data即最先执行完成的promise的返回值
+    console.log(data)
+})
+```
+
+
+
 ### 介绍一下async/await(和Promise的区别和联系)
 
+#### 用法
+
+- 使用await，函数必须用async标识
+- await后面跟的是一个**Promise实例**
+- 需要babel-polyfill
+
+async/await相当于Promise的一个扩展
+
 ### 当前JS解决异步的方案
+
+- jQuery Deferred
+- Promise
+- Async/Await
+- Generator
+
+##### 关于Generator
+
+- 原理比较复杂
+- 不是异步的直接替代方式
+- 有更好更简洁的解决方案async await
