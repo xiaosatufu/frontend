@@ -158,6 +158,10 @@ let a = {
 //  parseInt('3', 2) -> NaN
 ```
 
+#### forEach
+
+#### map和forEach的区别
+
 #### FlatMap
 
 > `FlatMap` 和 `map` 的作用几乎是相同的，但是对于多维数组来说，会将原数组降维。可以将 `FlatMap`看成是 `map` + `flatten` ，目前该函数在浏览器中还不支持。
