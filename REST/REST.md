@@ -68,3 +68,37 @@
 
 - 客户端可以下载运行服务端的代码（比如JS）
 - 通过减少一些功能，简化了客户端
+
+## RESTful API具体是什么样子？
+
+- 基本的URI，如https://api.github.com/user
+- 标准的HTTP方法，如GET,POST,PUT,PATCH,DELETE
+- 传输的数据媒体类型，如JSON,XML
+
+## RESTful API 设计最佳实践
+
+### 请求设计规范
+
+- URI使用名词，尽量使用复数，如/users
+- URI使用嵌套表示关联关系吗，如/users/12/repos/5
+- 使用正确的HTTP方法，如GET/POST/PUT/DELETE
+- 不符合CURD的情况：POST/action/子资源
+
+### 响应设计规范
+
+- 查询
+- 分页
+- 字段过滤
+- 状态码
+- 错误处理
+
+### 安全
+
+- HTTPS
+- 鉴权
+- 限流
+
+### 开发者友好
+
+- 文档
+- 超媒体
