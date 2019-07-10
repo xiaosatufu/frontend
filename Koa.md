@@ -401,3 +401,91 @@ mongodb+srv://yongshuang:<password>@koa-jgtfu.mongodb.net/test?retryWrites=true&
   
 
 - 用Mongoose连接MongoDB
+
+### 设计用户模块的Schema
+
+- 分析用户模块的属性
+- 编写用户模块的Schema
+- 使用Schema生成用户Model
+
+```js
+//models/users.js
+const mongoose = require('mongoose')
+const { Schema,model } = mongoose;
+const userSchema = new Schema({
+    name: { type: String, required: true },
+    age: { type: Number, required: false, default: 0 }
+})
+
+module.exports = model('User',userSchema)
+```
+
+### 使用MongoDB实现用户的增删改查
+
+- 用Mongoose实现增删改查接口
+- 用Postman测试接口
+
+```js
+
+const User = require('../models/users')
+class UsersCtl {
+    async find(ctx) {
+        ctx.body = await User.find()
+    }
+    async findById(ctx) {
+        const user = await User.findById(ctx.params.id)
+        if (!user) { ctx.throw(404) }
+        ctx.body = user
+    }
+    async create(ctx) {
+        ctx.verifyParams({
+            name: { type: 'string', required: true }
+        });
+        const user = await new User(ctx.request.body).save()
+        ctx.body = user
+
+    }
+    async update(ctx) {
+        ctx.verifyParams({
+            name: { type: 'string', required: true }
+        });
+        const user = await User.findByIdAndUpdate(ctx.params.id, ctx.request.body)
+        if (!user) {
+            ctx.throw(404, '用户不存在')
+
+        }
+        ctx.body = user
+    }
+    async delete(ctx) {
+        const user = await User.findByIdAndRemove(ctx.params.id)
+        if (!user) {
+            ctx.throw(404, '用户不存在')
+        }
+        ctx.status = 204;
+    }
+}
+
+module.exports = new UsersCtl()
+```
+
+## Session简介
+
+### Session的优势
+
+- 相比JWT，最大的优势就在于可以主动清除session
+- session 保存在服务器端，相对较为安全
+- 结合cookie使用，较为灵活，兼容性较好
+
+### Session的劣势
+
+- cookie+session在跨域场景表现并不好
+- 如果是分布式部署，需要做多机共享session机制
+- 基于cookie的机制很容易被
+- 查询session信息可能会有数据库查询操作
+
+### Session相关的概念介绍
+
+- session：主要放在服务器端，相对安全
+- cookie：主要放在客户端，并且不是很安全
+- sessionStorage：仅在当前会话下有小，关闭页面或浏览器 后被清除
+- localStorage：除非被清除，否则永久保存
