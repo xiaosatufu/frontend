@@ -491,3 +491,108 @@ class UsersCtl {
 - cookie：主要放在客户端，并且不是很安全
 - sessionStorage：仅在当前会话下有小，关闭页面或浏览器 后被清除
 - localStorage：除非被清除，否则永久保存
+
+## JWT
+
+### JWT简介
+
+- JSON Web Token 是一个开放标准（RFC 7519）
+- 定义了一种紧凑且独立的方式，可以将各方之间的信息作为JSON对象进行安全传输
+- 该信息可以验证和信任，因为是经过数字签名的
+
+### JWT构成
+
+- 头部（Header）
+  - typ：token的类型，这里固定为JWT
+  - alg：使用的hash算法，例如：HMAC SHA256或者RSA 
+- 有效载荷（Payload）
+  - 存储需要传递的信息，如用户ID、用户名等
+  - 还包含元数据，如过期时间，发布人等
+  - 与Header不同，Payload可以加密
+- 签名（Signature）
+  - 对Header和Payload部分进行签名
+  - 保证Token在传输的过程中没有被篡改或者损坏
+
+### JWT vs. Session
+
+- 可拓展性
+- 安全性
+- RESTful API、
+- 性能
+- 时效性
+
+### 操作JWT
+
+- 安装jsonwebtoken
+
+  ```js
+  npm install jsonwebtoken
+  ```
+
+- 签名
+
+  ```js
+  jwt = require('jsonwebtoken')
+  token = jwt.sign({name:'lilei','secret'})
+  
+  ```
+
+- 验证
+
+  ```js
+  jwt.verify(token,'secret')
+  ```
+
+  
+
+## 实现用户注册
+
+- 设计用户Schema
+- 编写保证唯一性的逻辑
+
+## 实现登录并获取Token
+
+- 登录接口设计
+
+- 用jsonwebtoken生成token
+
+  ```js
+  
+  // controller/users.js
+  const jsonwebtoken = require('jsonwebtoken')
+  const User = require('../models/users')
+  const { secret } = require('../config')
+  async login(ctx) {
+          ctx.verifyParams({
+              name: { type: 'string', required: true },
+              password: { type: 'string', required: true }
+          })
+          const user = await User.findOne(ctx.request.body)
+          if (!user) {
+              ctx.throw(401, '用户名或密码错误')
+          }
+          const { _id, name } = user
+          const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn: '1D' })
+          ctx.body = { token }
+      }
+  ```
+
+  
+
+
+
+## 编写Koa中间件实现用户认证与授权
+
+- 认证：验证token，并获取用户信息
+- 授权：使用中间件保护接口
+
+[koa中间件实现用户认证与授权](https://github.com/xiaosatufu/koa-api/commit/453de35320c577af78559c7b4134fe351dce8593)
+
+## Koa-jwt中间件实现用户认证与授权
+
+- 安装koa-jwt
+- 使用中间件保护接口
+- 使用中间件获取用户信息
+
+[使用koa-jwt中间件使用用户认证与授权](https://github.com/xiaosatufu/koa-api/commit/7f7be36adb76e794cf1a165a58fab98875a836ea)
+
