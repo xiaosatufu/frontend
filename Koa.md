@@ -255,7 +255,7 @@ usersRouter.delete('/:id', (ctx) => {
         db.splice(ctx.params.id*1,1)
         ctx.status = 204;
     })
-    ```
+ ```
 
 
 
@@ -303,7 +303,9 @@ usersRouter.delete('/:id', (ctx) => {
 
    ```js
     npm i koa-json-error --save
+   ```
   ```
+
   ```
 
 
@@ -323,7 +325,7 @@ const error = require('koa-json-error')
 app.use(error({
     postFormat: (e, { stack, ...rest }) => process.env.NODE_ENV === 'production' ? rest : { stack, ...rest }
 }))
-  ```
+ ```
 
  ### 使用koa-parameter校验参数
 
@@ -396,16 +398,17 @@ mongodb+srv://yongshuang:<password>@koa-jgtfu.mongodb.net/test?retryWrites=true&
 
    ```js
     npm i mongoose --save
+   ```
   ```
 
  用Mongoose连接MongoDB
 
-```js
+​```js
 const mongoose = require('mongoose')
 mongoose.connect(connectionStr,{ useNewUrlParser: true },()=>{
     console.log('MongoDB连接成功')
 })
-```
+  ```
 
 
 
@@ -595,4 +598,108 @@ class UsersCtl {
 - 使用中间件获取用户信息
 
 [使用koa-jwt中间件使用用户认证与授权](https://github.com/xiaosatufu/koa-api/commit/7f7be36adb76e794cf1a165a58fab98875a836ea)
+
+## 上传图片需求分析
+
+- 用户头像		
+
+- 封面图片
+- 问题和回答中的图片
+- 话题图片
+
+### 上传图片的功能点
+
+- 基础功能：上传图片，生成图片链接
+- 附加功能：限制上传图片的大小与类型，生成高中低三种分辨率的图片链接，生成CDN
+
+### 上传图片的技术方案
+
+- 阿里云OSS等云服务，推荐在生产环境下使用
+- 直接上传到服务器，不推荐在生产环境下中使用
+
+### 使用koa-body中间件获取上传的文件
+
+- 安装koa-body，替换koa-bodyparser
+- 设置图片上传目录
+- 使用Postman上传文件
+
+### 使用koa-static中间件生成图片链接
+
+- 安装koa-static
+- 设置静态文件目录
+- 生成图片链接
+
+### 编写前端页面上传文件
+
+- 编写上传文件的前端页面
+- 与后端接口联调测试
+
+## 个人资料页需求分析
+
+#### 个人资料功能点
+
+- 不同类型（如字符串，数组）的属性
+- 字段过滤
+
+### 个人资料的Schema设计
+
+- 分析个人资料的数据结构
+
+### 个人资料的参数校验
+
+- 分析个人资料的数据结构
+- 编写代码校验个人资料参数
+- 使用postman测试
+
+### RESTful最佳实践--字段过滤
+
+- 设计schema默认隐藏部分字段
+- 通过查询字符串显示隐藏字段
+- 使用postman测试
+
+## 关注与粉丝需求 
+
+- 关注，取消关注
+- 获取关注人，粉丝列表（用户-用户多对多关系）
+
+### 关注与粉丝的schema设计
+
+- 分析关注与粉丝的数据结构
+- 设计关注与粉丝的schema
+
+### RESTful风格的关注与粉丝接口
+
+- 实现获取关注人和粉丝列表接口
+- 实现关注和取消关注接口
+
+## 编写校验用户存在与否的中间件
+
+```js
+   async checkUserExist(ctx,next) {
+        const user = await User.findById(ctx.params.id)
+        if(!user) {ctx.throw(404,'用户不存在')}
+        await next()
+    }
+```
+
+## 话题模块
+
+### 话题的功能点
+
+- 话题的增改查
+- 分页，模糊搜索
+- 用户属性中话题的引用
+- 关注或取消关注话题，用户关注的话题列表
+
+## 分页
+
+## 模糊搜索
+
+## 用户属性中的话题引用
+
+- 使用话题引用替代部分用户属性
+
+## RESTful风格的关注话题接口
+
+- 关注话题的逻辑（用户-话题多对多关系）
 
